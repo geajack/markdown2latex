@@ -4,10 +4,8 @@ import marko.inline as inline
 
 import re
 
-class FencedCode(marko.block.BlockElement):
-    """Fenced code block: (```python\nhello\n```\n)"""
-
-    priority = 7
+class Formula(marko.block.BlockElement):
+    priority = 8
     pattern = re.compile(r"( {,3})(`{3,}|~{3,})[^\n\S]*(.*?)$", re.M)
     _parse_info = ("", "", "", "")  # type: Tuple[str, str, str, str]
 
@@ -82,8 +80,11 @@ class Renderer:
     def render_emphasis(self, element):
         return "\\textit{" + self.render_children(element) + "}"
 
+    def render_formula(self, element):
+        return "FORMULA"
+
 class Extension:
-    elements=[FencedCode]
+    elements=[Formula]
     renderer_mixins = [Renderer]
 
 markdown = marko.Markdown(extensions=[Extension])
