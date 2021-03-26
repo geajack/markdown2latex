@@ -4,30 +4,21 @@ import marko.inline as inline
 
 import re
 
+FENCE = "\\$\\$"
 class Formula(marko.block.BlockElement):
     priority = 8
-    pattern = re.compile(r"( {,3})(`{3,}|~{3,})[^\n\S]*(.*?)$", re.M)
-    _parse_info = ("", "", "", "")  # type: Tuple[str, str, str, str]
+    pattern = re.compile("\\$\\$", re.M)
 
-    def __init__(self, match):  # type: (Tuple[str, str, str]) -> None
-        self.lang = inline.Literal.strip_backslash(match[0])
-        self.extra = match[1]
-        self.children = [inline.RawText(match[2])]
+    def __init__(self, match):
+        self.children = [inline.RawText(match)]
 
     @classmethod
-    def match(cls, source):  # type: (Source) -> Optional[Match]
-        m = source.expect_re(cls.pattern)
-        if not m:
-            return None
-        prefix, leading, info = m.groups()
-        if leading[0] == "`" and "`" in info:
-            return None
-        lang, extra = (info.split(None, 1) + [""] * 2)[:2]
-        cls._parse_info = prefix, leading, lang, extra
+    def match(cls, source):
+        m = source.expect_re("\\$\\$")
         return m
 
     @classmethod
-    def parse(cls, source):  # type: (Source) -> Tuple[str, str, str]
+    def parse(cls, source):
         source.next_line()
         source.consume()
         lines = []
@@ -36,17 +27,11 @@ class Formula(marko.block.BlockElement):
             if line is None:
                 break
             source.consume()
-            m = re.match(r" {,3}(~+|`+)[^\n\S]*$", line, flags=re.M)
-            if m and cls._parse_info[1] in m.group(1):
+            m = re.match("\\$\\$", line)
+            if m:
                 break
-
-            prefix_len = source.match_prefix(cls._parse_info[0], line)
-            if prefix_len >= 0:
-                line = line[prefix_len:]
-            else:
-                line = line.lstrip()
             lines.append(line)
-        return cls._parse_info[2], cls._parse_info[3], "".join(lines)
+        return "".join(lines)
 
 class Renderer:
 
@@ -81,7 +66,7 @@ class Renderer:
         return "\\textit{" + self.render_children(element) + "}"
 
     def render_formula(self, element):
-        return "FORMULA"
+        return "\\begin{equation*}\n" + self.render_children(element) + "\\end{equation*}\n\n"
 
 class Extension:
     elements=[Formula]
