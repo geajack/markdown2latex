@@ -2,6 +2,11 @@
 
 This is an example.
 
+```python
+testing stuff
+test
+```
+
 # Introduction
 
 This is the introduction. **This text is bold.** *This text is italic.* What follows is some mathematical text copied from another source.
