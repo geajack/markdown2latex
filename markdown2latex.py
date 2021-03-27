@@ -13,14 +13,13 @@ class InlineFormula(marko.inline.InlineElement):
         self.content = match.group(1)
 
 class BlockFormula(marko.block.BlockElement):
-    pattern = re.compile("\\$\\$", re.MULTILINE)
-
     def __init__(self, match):
         self.children = [marko.inline.RawText(match)]
 
     @classmethod
     def match(cls, source):
-        match = source.expect_re("\\$\\$")
+        pattern = re.compile("\\$\\$.*?$", re.M)
+        match = source.expect_re(pattern)
         return match
 
     @classmethod
@@ -30,32 +29,23 @@ class BlockFormula(marko.block.BlockElement):
         lines = []
         while not source.exhausted:
             line = source.next_line()
-            if line != "$$":
-                lines.append(line)
             source.consume()
+            if line.strip() == "$$":
+                break
+            lines.append(line)
         return "".join(lines)
 
 class ExampleBlock(marko.block.BlockElement):
     priority = 8
-    pattern = re.compile(r"( {,3})(`{3,}|~{3,})[^\n\S]*(.*?)$", re.M)
-    _parse_info = ("", "", "", "")  # type: Tuple[str, str, str, str]
 
     def __init__(self, match):  # type: (Tuple[str, str, str]) -> None
-        self.lang = marko.inline.Literal.strip_backslash(match[0])
-        self.extra = match[1]
-        self.children = [marko.inline.RawText(match[2])]
+        self.children = [marko.inline.RawText(match)]
 
     @classmethod
     def match(cls, source):  # type: (Source) -> Optional[Match]
-        m = source.expect_re(cls.pattern)
-        if not m:
-            return None
-        prefix, leading, info = m.groups()
-        if leading[0] == "`" and "`" in info:
-            return None
-        lang, extra = (info.split(None, 1) + [""] * 2)[:2]
-        cls._parse_info = prefix, leading, lang, extra
-        return m
+        pattern = re.compile(r"```.*?$", re.M)
+        match = source.expect_re(pattern)
+        return match
 
     @classmethod
     def parse(cls, source):  # type: (Source) -> Tuple[str, str, str]
@@ -64,20 +54,11 @@ class ExampleBlock(marko.block.BlockElement):
         lines = []
         while not source.exhausted:
             line = source.next_line()
-            if line is None:
-                break
             source.consume()
-            m = re.match(r" {,3}(~+|`+)[^\n\S]*$", line, flags=re.M)
-            if m and cls._parse_info[1] in m.group(1):
+            if line.strip() == "```":
                 break
-
-            prefix_len = source.match_prefix(cls._parse_info[0], line)
-            if prefix_len >= 0:
-                line = line[prefix_len:]
-            else:
-                line = line.lstrip()
             lines.append(line)
-        return cls._parse_info[2], cls._parse_info[3], "".join(lines)
+        return "".join(lines)
 
 class Renderer:
 
@@ -97,7 +78,7 @@ class Renderer:
         return self.render_children(element) + "\n\n"
 
     def render_example_block(self, element):
-        return "HI" + "\n\n"
+        return "[" + self.render_children(element) + "]\n"
 
     # def render_heading(self, element):
     #     heading_level = element.level
