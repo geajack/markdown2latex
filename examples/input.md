@@ -1,21 +1,12 @@
-# An example
+This is $$an inline formula$$.
 
-This is an example.
-
-# Introduction
-
-This is the introduction. **This text is bold.** *This text is italic.* What follows is some mathematical text copied from another source.
-
-Let $u(t)=f_t(X)-Y$, $H=k(X,X)$, and $h=k(x,X)$. Then from $(2)$ we can write the linear ODE
-
+This is a block formula with no gap
 $$
-u'=-\frac2nHu
+1 + 1 = 2
 $$
 
-## Subsection
+This is a block formula with a gap
 
-This is a subsection.
-
-### Subsubsection
-
-And this is a subsubsection.
+$$
+1 + 1 = 2
+$$
