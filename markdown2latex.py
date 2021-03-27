@@ -76,8 +76,11 @@ class Extension:
     elements = [BlockFormula, Paragraph]
     renderer_mixins = [Renderer]
 
-if __name__ == "__main__":
+def main():
     markdown = marko.Markdown(renderer=MarkdownRenderer, extensions=[Extension])
     text = stdin.read()
     output = markdown.convert(text)
     print(output)
+
+if __name__ == "__main__":
+    main()
