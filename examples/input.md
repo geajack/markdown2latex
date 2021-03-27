@@ -1,3 +1,8 @@
+This is an example block with no gap
+```
+testing
+```
+
 This is $$an inline formula$$.
 
 This is a block formula with no gap
