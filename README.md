@@ -15,3 +15,5 @@ To install this script:
 ```
 $ pip install git+https://github.com/geajack/markdown2latex.git
 ```
+
+This script relies on the [marko](https://github.com/frostming/marko) library.
