@@ -39,6 +39,9 @@ r"""\documentclass[10pt,a4paper]{article}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[bookmarks]{hyperref}
 
 \begin{document}
 """
