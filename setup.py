@@ -11,7 +11,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/geajack/markdown2latex",
-    modules=["markdown2latex"],
+    py_modules=["markdown2latex"],
     classifiers=[
     ],
     python_requires='>=3.6',
