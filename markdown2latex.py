@@ -86,6 +86,14 @@ r"""\title{""" + self.render_children(element) + r"""}
     def render_list_item(self, element):
         return "\item " + self.render_children(element) + "\n"
 
+    def render_image(self, element):
+        return f"""
+\\begin{{figure}}[H]
+\\includegraphics[width=\linewidth]{{{element.dest}}}
+\\caption{{This is an image.}}
+\\end{{figure}}
+"""
+
 class Extension:
     elements = [BlockFormula, Paragraph]
     renderer_mixins = [Renderer]
