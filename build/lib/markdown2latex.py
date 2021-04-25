@@ -39,10 +39,13 @@ r"""\documentclass[10pt,a4paper]{article}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[bookmarks]{hyperref}
 
 \begin{document}
 """
-        return preamble + "\n" + self.render_children(element) + "\\end{document}"
+        return preamble + "\n" + self.render_children(element).strip() + "\n\n\\end{document}"
     
     def render_paragraph(self, element):
         return self.render_children(element) + "\n"
@@ -71,6 +74,25 @@ r"""\title{""" + self.render_children(element) + r"""}
 
     def render_block_formula(self, element):
         return "\n\\begin{equation*}\n" + self.render_children(element) + "\\end{equation*}\n"
+
+    def render_list(self, element):
+        if element.ordered:
+            tag = "enumerate"
+        else:
+            tag = "itemize"
+        
+        return f"\\begin{{{tag}}}\n\n" + self.render_children(element) + f"\\end{{{tag}}}\n"
+
+    def render_list_item(self, element):
+        return "\item " + self.render_children(element) + "\n"
+
+    def render_image(self, element):
+        return f"""
+\\begin{{figure}}[H]
+\\includegraphics[width=\linewidth]{{{element.dest}}}
+\\caption{{This is an image.}}
+\\end{{figure}}
+"""
 
 class Extension:
     elements = [BlockFormula, Paragraph]
